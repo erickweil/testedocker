@@ -516,6 +516,78 @@ Como vimos anteriormente, o DockerHub é um repositório de imagens para que ima
     >Veja que foram enviadas apenas as camadas que foram construídas após as camadas do node, já que as camadas do node já existem no DockerHub não foi preciso enviá-las.
 4. Agora no DockerHub, ao entra na listagem da aba **Repositories**, pode visualizar suas imagens enviadas.
 
+## Volumes
+
+Você deve ter percebido que quando um container é deletado todos os seus dados são perdidos, **Volumes** servem para resolver este problema, permitindo que dados sejam persistidos entre reinícios do container e até mesmo compartilhado com vários containers.
+
+Há dois tipos principais de volumes que podem ser utilizados:
+
+- Bind Mount
+  Esta forma mapeia um diretório do computador Host para dentro do container, basicamente permitindo que o container acesse o sistema de arquivos do computador em que está sendo executado
+- Docker Named Volume
+  Com docker volumes você especifica um nome que será utilizado para identificar o volume, que começará sem nenhum conteúdo e o próprio docker irá gerenciar.
+
+### Como executar um container com mapeamento de volume?
+
+1. Exemplo Bind Mount
+
+Digamos que você possua um site html no caminho ./site/index.html, e queira subir um container nginx que acesse este seu arquivo. 
+
+A imagem nginx acessa o diretório /usr/share/nginx/html para exibir o site, então se mapearmos o site para dentro do container neste diretório específico, ele será exibido
+
+~~~bash
+docker run -d -p 3000:80 -v ./site:/usr/share/nginx/html nginx:alpine
+~~~
+
+Abra o site em localhost:3000 e aparecerá o site.
+
+2. Exemplo Docker Named Volume
+
+Outra situação é quando você possui uma aplicação que durante a sua execução produz arquivos que devem ser persistidos. Porém o diretório onde eles são salvos pode começar vazio. 
+
+O exemplo a seguir demonstrará a criação de um banco de dados MongoDB com volume mapeado. Por padrão o mongo armazena todos os dados em /data/db, portanto basta mapear este diretório do container em um volume e ficará salvo quaisquer dados do banco.
+
+~~~bash
+docker run -d --name teste_mongo -p 27017:27017 -v mongo-vol:/data/db mongo:4.4.6
+~~~
+
+Então para verificar que funciona o volume, vamos criar uma coleção no banco, deletar o container e executá-lo denovo
+
+~~~bash
+docker exec -it teste_mongo sh
+$ mongo
+MongoDB server version: 4.4.6
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+> use teste-database
+switched to db teste-database
+> db.usuarios.insert({nome:"Erick",email:"exemplo@exemplo.com"});
+WriteResult({ "nInserted" : 1 })
+> exit
+bye
+$ exit
+~~~
+
+Agora deletando e subindo novamente o container
+
+~~~bash
+docker rm -f teste_mongo
+docker run -d --name teste_mongo -p 27017:27017 -v mongo-vol:/data/db mongo:4.4.6
+~~~
+
+E verificando que os dados ainda existem dentro do container
+
+~~~bash
+docker exec -it teste_mongo sh
+$ mongo
+MongoDB server version: 4.4.6
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+> use teste-database
+switched to db teste-database
+> db.usuarios.find()
+{ "_id" : ObjectId("646d31dde06f80c27360d3e9"), "nome" : "Erick", "email" : "exemplo@exemplo.com" }
+~~~
 
 # Laboratório #1 - criando imagem site estático HTML/CSS/JS
 
