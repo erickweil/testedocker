@@ -1,0 +1,35 @@
+# Util para listar e gerenciar os arquivos de um volume docker
+# 
+# Executando este exemplo:
+# Modifique o volume que irá ser mapeado, para
+# o nome do volume que deseja explorar
+# Execute:
+# $ docker compose -f filebrowser.yml up -d
+# E então acesse http://localhost:3000/
+# Usuário: admin
+# Senha: admin123
+# Obs: Não será possível alterar arquivos que não possuam a permissão correta
+# Obs²: Caso o volume possua arquivos que são links simbólicos irá dizer que deu erro ao abrir o volume
+version: "3.8"
+services:
+  filebrowser:
+    #image: filegator/filegator
+    build:
+      context: .
+      args:
+        # UID do usuário, importante para funcionar as permissões.
+        # Deve ser igual ao UID do dono do volume
+        UID: 1000
+      dockerfile: filebrowser.Dockerfile
+    ports:
+      - "3000:8080"
+    volumes:
+      - vol:/var/www/filegator/repository/volume
+
+# Escolha aqui qual volume
+# deseja explorar no filebrowser
+# ESTE VOLUME DEVE EXISTIR ANTES DE EXECUTAR O DOCKER COMPOSE
+volumes:
+  vol:
+    external: true
+    name: "insira-aqui-o-volume-docker"

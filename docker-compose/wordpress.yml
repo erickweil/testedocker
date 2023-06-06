@@ -8,6 +8,7 @@
 
 # O Wordpress quando iniciado irá lhe guiar por um processo de instalação simples
 # e então você poderá criar um site de forma fácil
+version: "3.8"
 services:
   db:
     image: mysql

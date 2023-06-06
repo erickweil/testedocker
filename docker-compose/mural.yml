@@ -1,0 +1,22 @@
+# Retirado do projeto gitlab.fslab.dev/erickweil/nodejs-express-ejs/
+
+# Mural, permite subir um site que é um mural de postagens
+
+# Executando este exemplo:
+# $ docker compose -f mural.yml up -d
+# E então acesse http://localhost:3000/
+version: '3.8'
+services:
+  mongo:
+    image: mongo:4.4.6
+    volumes:
+      - vol-db:/data/db
+  mural:
+    image: erickweil/mural
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=3000
+      - MONGODB_URL=mongodb://mongo:27017
+volumes:
+  vol-db:
