@@ -1,0 +1,32 @@
+# Modificado de https://github.com/docker/awesome-compose/blob/master/wordpress-mysql/
+# Este exemplo demonstra que é possível iniciar um site
+# Wordpress com docker compose
+
+# Executando este exemplo:
+# $ docker compose -f wordpress.yml up -d
+# E então acesse http://localhost:3000/
+
+# O Wordpress quando iniciado irá lhe guiar por um processo de instalação simples
+# e então você poderá criar um site de forma fácil
+services:
+  db:
+    image: mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=somewordpress
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+  wordpress:
+    image: wordpress
+    ports:
+      - 3000:80
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+volumes:
+  db_data:

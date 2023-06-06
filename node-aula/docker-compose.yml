@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  meu-banco:
+    image: mongo:4.4.6
+    volumes:
+      - vol-banco:/data/db
+  node-aula:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - MONGODB_URL=mongodb://meu-banco:27017
+      - TITULO=Teste Docker Compose
+volumes:
+  vol-banco:

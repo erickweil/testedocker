@@ -1,0 +1,46 @@
+# Este exemplo executa dois containers
+# Um container do banco mysql e outro do phpmyadmin
+# PHPMyAdmin é uma ferramenta para gerenciar bancos de dados
+# Mysql de forma fácil
+#
+# Rede 'net-mysql'
+# ______________________________________________________
+#|   __________                   _____________        |
+#|   \  mysql  \- 3306 <--------- \ phpmyadmin \-80 -->|- 3000
+#|    \_________\                  \____________\      |
+#|   /var/lib/mysql                                    |
+#|        |                                            |
+#|   (volume-mysql)                                    |
+#|_____________________________________________________|
+#
+# Executando este exemplo:
+# $ docker compose -f phpmyadmin.yml up -d
+# E então acesse http://localhost:3000/
+version: "3.7"
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "senhamuitodificil"
+    volumes:
+      - volume-mysql:/var/lib/mysql
+    networks:
+      - net-mysql
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "3000:80"
+    environment:
+      PMA_HOST: "mysql"
+      PMA-PORT: "3306"
+      MYSQL_ROOT_PASSWORD: "senhamuitodificil"
+    networks:
+      - net-mysql
+    
+networks:
+  net-mysql:
+
+volumes:
+  volume-mysql:
