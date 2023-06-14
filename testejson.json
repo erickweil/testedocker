@@ -1,0 +1,17 @@
+{
+	"nome": "Navio",
+	"tripulantes": [
+		{
+			"nome": "Jack Sparrow",
+			"funcao": "capitão"
+		},
+		{
+			"nome": "Barba negra",
+			"funcao": "Timoneiro"
+		},
+		{
+			"nome": "Papagaio",
+			"funcao": "mascote"
+		}
+	]
+}
