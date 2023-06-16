@@ -16,8 +16,17 @@
 
 FROM ghcr.io/nestybox/ubuntu-jammy-systemd-docker:latest
 
+EXPOSE 22
+EXPOSE 8080
 WORKDIR /root
 
-COPY . .
+COPY install.sh .
 RUN chmod +x *.sh && \
 	/bin/bash ./install.sh
+
+# Para realizar build
+# docker build -t erickweil/container-vm .
+# Executar container:
+# docker rm -f vm01 && docker run -d --name vm01 -p 3000:22 -p 3001:8080 --privileged erickweil/container-vm
+# Instalar usuário
+# docker exec vm01 /bin/bash -c "export USERNAME=usuario && PASSWORD=senha && /bin/bash ./create_user.sh"
