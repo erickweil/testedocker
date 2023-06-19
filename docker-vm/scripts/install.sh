@@ -2,7 +2,7 @@
 apt-get update
 
 echo "Instalar programas" 
-apt-get install nano vim curl iputils-ping dnsutils git htop gettext -y
+apt-get install nano vim curl iputils-ping dnsutils git htop gettext python3 -y
 
 # Instalar code-server
 curl -fsSL https://code-server.dev/install.sh | sh
@@ -15,6 +15,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install v20.3.0
 # Mover nvm para pasta fora do /root
 mv .nvm /opt/nvm
+chmod -R 777 /opt/nvm
 
 # Para funcionar nano com acentos
 # https://serverfault.com/questions/362903/how-do-you-set-a-locale-non-interactively-on-debian-ubuntu

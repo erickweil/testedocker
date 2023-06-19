@@ -20,7 +20,8 @@ EXPOSE 22
 EXPOSE 8080
 WORKDIR /root
 
-COPY install.sh .
+COPY scripts/*.sh ./
+COPY code-server/*.yaml ./
 RUN chmod +x *.sh && \
 	/bin/bash ./install.sh
 

@@ -1,17 +1,13 @@
+# Opcional, apenas caso não queira utilizar volumes
 FROM erickweil/container-vm
 
 # create_user.sh
 ENV USERNAME=usuario
 ENV PASSWORD=senha
 
-# code-server
-ENV DEFAULT_WORKSPACE=/home/usuario
-
-COPY . .
 RUN chmod +x *.sh && \
-	/bin/bash ./create_user.sh
+	/bin/bash ./create_user.sh $USERNAME $PASSWORD
 
-	
 # Para realizar build
 # docker build -f Dockerfile.user -t erickweil/container-vm:usuario .
 # Executar container:
