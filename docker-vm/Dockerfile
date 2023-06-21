@@ -16,8 +16,11 @@
 
 FROM ghcr.io/nestybox/ubuntu-jammy-systemd-docker:latest
 
+# SSH Server
 EXPOSE 22
+# Code-Server
 EXPOSE 8080
+
 WORKDIR /root
 
 COPY scripts/*.sh ./

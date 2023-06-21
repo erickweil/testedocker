@@ -25,7 +25,7 @@ Todos esse objetivos serão atendidos com o uso de um container docker que se co
 
 Existem imagens docker do code-server ([codercom/code-server:latest](https://coder.com/docs/code-server/latest/install#docker) ou [linuxserver/code-server](https://hub.docker.com/r/linuxserver/code-server)) porém estas imagens docker possuem pouco ou quase nenhum software pré-instalado, e considerando as necessidades específicas deste cenário foi preciso a criação de uma imagem Docker própria.
 
-> Pode-se perguntar: Mas e porquê utilizar containers docker e não criar logo uma Máquina virtual para cada um? A vantagem de containers docker é que os recursos de memória, cpu e armazenamento serão compartilhados quase como numa internet banda larga a banda é compartilhada, não é necessário possuir todos os recursos previstos pré-reservados, apenas os recursos que se tornarem realmente necessários pelo uso.
+> Pode-se perguntar: Mas e porquê utilizar containers docker e não criar logo uma Máquina virtual para cada um? A vantagem de containers docker é que os recursos de memória, cpu e armazenamento serão compartilhados quase como numa internet banda larga a banda é compartilhada, não é necessário possuir todos os recursos previstos pré-reservados, apenas os recursos que se tornarem realmente necessários pelo uso. Leitura relacionada: https://blog.nestybox.com/2020/09/23/perf-comparison.html
 
 ## Imagem Docker
 

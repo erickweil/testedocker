@@ -764,3 +764,10 @@ docker run -it --name matrix erickweil/python-matrix
 > Essas imagens estão publicadas no DockerHub com esse nome, então você mesmo pode executar o comando docker run acima e irá funcionar! a imagem será baixada do DockerHub e executada em seu computador.
 
 > ATENÇÃO: NÃO execute qualquer imagem que encontrar no DockerHub, apenas faça-o de fontes conhecidas e/ou que estiverem marcadas como imagens oficiais. É perfeitamente possível que uma imagem disponibilizada no DockerHub contenha malware.
+
+
+## Alternativa aos comandos docker para gerenciar containers
+
+https://moncho.github.io/dry/
+
+Facilita bastante o gerenciamento por prover uma aplicação de terminal interativa fácil de usar
