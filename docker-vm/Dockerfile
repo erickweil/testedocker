@@ -23,6 +23,7 @@ EXPOSE 8080
 
 WORKDIR /root
 
+# VER DEPOIS: Configurar que programas instalar ou não via alguma variável de ambiente
 COPY scripts/*.sh ./
 COPY code-server/*.yaml ./
 RUN chmod +x *.sh && \

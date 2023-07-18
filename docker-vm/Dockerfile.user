@@ -1,5 +1,5 @@
 # Opcional, apenas caso não queira utilizar volumes
-FROM erickweil/container-vm
+FROM erickweil/container-vm:latest
 
 # create_user.sh
 ENV USERNAME=usuario

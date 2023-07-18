@@ -7,8 +7,12 @@ Criar containers docker que funcionam quase idêntico à uma máquina virtual. C
 ## Criar um novo container para um aluno:
 Considerando que ao montar um volume docker o mesmo inicia-se vazio, o processo de iniciar o container de um aluno consiste em:
 
-1. Iniciar o novo container com o `docker run`, utilizando o container runtime Sysbox:
-2. Executar o script de criação do usuário com `docker exec`
+1. (Primeira vez) Criar a rede que os containers irão fazer parte
+2. Criar o volume do container
+3. Iniciar o novo container com o `docker run`, utilizando o container runtime Sysbox, com rede, volume, e portas mapeados corretamente
+4. Executar o script de criação do usuário com `docker exec`
+
+O script novo_container.sh faz esse procedimento, recebendo o usuário, senha, porta do code server e porta do ssh:
 ```bash
 bash ./novo_container.sh usuario senha 8080 22
 ```
@@ -43,5 +47,7 @@ O Sysbox é um **container runtime** open-source e gratuito que melhora containe
 
 Qualquer imagem docker pode ser executada neste container runtime, o que muda é apenas como o container se comporta. Não há nada de especial a não ser a necessidade de instalar o Sysbox na máquina host e passar a opção `--runtime=sysbox-runc` ao executar o container.
 
-> É importante notar que a instalação do Sysbox exige o **Shiftfs** instalado caso o kernel do linux seja menor que 5.19 (uname -a para ver a versão do kernel). Veja: [https://github.com/nestybox/sysbox/blob/master/docs/distro-compat.md](https://github.com/nestybox/sysbox/blob/master/docs/distro-compat.md) - A solução para isso é ou fazer upgrade do kernel ou utilizar uma distribuição mais recente (O Ubuntu Lunar Lobster já está no kernel 6.2)
+> É importante notar que a instalação do Sysbox exige o **Shiftfs** instalado caso o kernel do linux seja menor que 5.19 (uname -a para ver a versão do kernel). Veja: [https://github.com/nestybox/sysbox/blob/master/docs/distro-compat.md](https://github.com/nestybox/sysbox/blob/master/docs/distro-compat.md) 
+> 
+> A solução para isso é ou fazer upgrade do kernel (Veja https://github.com/pimlie/ubuntu-mainline-kernel.sh) ou utilizar uma distribuição mais recente (O Ubuntu Lunar Lobster já está no kernel 6.2)
 

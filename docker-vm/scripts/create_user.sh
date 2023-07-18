@@ -1,6 +1,9 @@
+systemctl stop code-server@admin
+systemctl disable code-server@admin
 userdel --remove admin
 export USERNAME=$1
 export PASSWORD=$2
+export CODEAUTH=password
 # Adiciona o novo usuário com diretório home
 useradd --create-home --shell /bin/bash $USERNAME
 # Muda a sua senha e adiciona ao grupo sudo
@@ -15,11 +18,6 @@ mkdir -p /home/$USERNAME/.ssh
 # https://winaero.com/run-chmod-separately-for-files-and-directories/
 chown -R $USERNAME:$USERNAME /home/$USERNAME
 chmod -R 644 /home/$USERNAME && find /home/$USERNAME -type d -print0 |xargs -0 chmod 755
-
-#Pegar Instalação do node do root e colocar para o usuário
-echo 'export NVM_DIR="/opt/nvm"' >> /home/$USERNAME/.bashrc
-echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /home/$USERNAME/.bashrc # This loads nvm
-echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> /home/$USERNAME/.bashrc # This loads nvm bash_completion
 
 # Configurar code-server
 # https://stackoverflow.com/questions/14155596/how-to-substitute-shell-variables-in-complex-text-files

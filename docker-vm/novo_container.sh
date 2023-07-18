@@ -30,5 +30,10 @@ docker run -d --runtime=sysbox-runc \
 	--cpus=1 \
 	erickweil/container-vm
 
+# Obs:
+# 2G de memória não foi suficiente para rodar os testes
+# quando em paralelo. lembrar da opção do jest para rodar 
+# um por vez --runInBand
+
 # Cria o usuário, configura o code-server, git, chave ssh, node, e permissões do /home do usuário
 docker exec $CONTAINER bash -c "bash /root/create_user.sh $USERNAME $PASSWORD"
