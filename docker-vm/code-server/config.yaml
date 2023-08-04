@@ -1,4 +1,4 @@
 bind-addr: 0.0.0.0:8080
 auth: $CODEAUTH
-password: $PASSWORD
+password: "$PASSWORD"
 cert: false
