@@ -1,0 +1,7 @@
+FROM f0c756907b9f
+
+WORKDIR /root
+
+COPY scripts/install_kubectl.sh ./
+RUN chmod +x install_kubectl.sh && \
+	/bin/bash ./install_kubectl.sh

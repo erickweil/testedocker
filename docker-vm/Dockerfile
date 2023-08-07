@@ -27,7 +27,10 @@ WORKDIR /root
 COPY scripts/*.sh ./
 COPY code-server/*.yaml ./
 RUN chmod +x *.sh && \
-	/bin/bash ./install.sh
+	/bin/bash ./install.sh && \
+	/bin/bash ./install_node.sh && \
+	/bin/bash ./install_locale.sh && \
+	/bin/bash ./install_java.sh
 
 # Para realizar build
 # docker build -t erickweil/container-vm .
