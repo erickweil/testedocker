@@ -13,8 +13,7 @@
 #
 # where <host-port> is chosen by Docker and mapped into the system container's sshd port.
 #
-
-FROM ghcr.io/nestybox/ubuntu-jammy-systemd-docker:latest
+FROM ghcr.io/nestybox/ubuntu-jammy-systemd:latest
 
 # SSH Server
 EXPOSE 22
@@ -24,13 +23,21 @@ EXPOSE 8080
 WORKDIR /root
 
 # VER DEPOIS: Configurar que programas instalar ou não via alguma variável de ambiente
+# Por enquanto é só comentar ou descomentar aqui na hora de fazer o build
 COPY scripts/*.sh ./
 COPY code-server/*.yaml ./
 RUN chmod +x *.sh && \
-	/bin/bash ./install.sh && \
-	/bin/bash ./install_node.sh && \
-	/bin/bash ./install_locale.sh && \
-	/bin/bash ./install_java.sh
+	/bin/bash ./install.sh \
+#	&& /bin/bash ./install_docker.sh \
+	&& /bin/bash ./install_ssh.sh \
+#	&& /bin/bash ./install_code.sh \
+#	&& /bin/bash ./install_node.sh \
+#	&& /bin/bash ./install_python.sh \
+#	&& /bin/bash ./install_java.sh \
+#	&& /bin/bash ./install_kubectl.sh \
+	&& /bin/bash ./install_locale.sh \
+# Por último... Limpar cache do apt
+	&& rm -rf /var/lib/apt/lists/*
 
 # Para realizar build
 # docker build -t erickweil/container-vm .
