@@ -42,9 +42,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Para realizar build
-# docker build -t erickweil/container-vm:code-base .
+# docker build -t erickweil/container-vm:code .
 # Executar container:
-# docker rm -f vm01 && docker run -d --name vm01 -p 3000:8080 --privileged erickweil/container-vm:code-base
+# docker rm -f vm01 && docker run -d --name vm01 -p 3000:8080 --privileged erickweil/container-vm:code
 # Instalar usuário
 # docker exec vm01 /bin/bash -c "export USERNAME=usuario && PASSWORD=senha && /bin/bash ./create_user.sh"
 # Se quiser aplicar um container que foi modificado para ser uma imagem com commit

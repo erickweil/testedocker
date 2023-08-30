@@ -1,5 +1,8 @@
 #!/bin/bash
-
+# Este script pega a imagem com o usuário 'admin', deleta ele e cria um novo
+#
+# É possível que o diretório home do usuário já exista (volume mapeado), 
+# mas não o usuário em si, por isso o chmod e todos os if's
 export USERNAME=$1
 export PASSWORD=$2
 export CODEAUTH=password
@@ -20,17 +23,20 @@ fi
 userdel --remove admin
 # Adiciona o novo usuário com diretório home
 useradd --create-home --shell /bin/bash $USERNAME
-# Copia o skel manualmente, porque quando tem volume não funciona
-# https://www.dba-db2.com/2013/07/useradd-in-linux-not-copying-any-file-from-skel-directory-into-it.html
-cp -r /etc/skel/. /home/$USERNAME
+
 # Muda a sua senha e adiciona ao grupo sudo
 echo "$USERNAME:$PASSWORD" | chpasswd
 adduser $USERNAME sudo
 # Adiciona ao grupo docker
 usermod -aG docker $USERNAME
 
-# Operações que só serão feitas se o usuário não existia
+# Operações que só serão feitas se o volume da pasta do usuário estava vazio
 if [ ! $JACRIOU ]; then
+	# Copia o skel manualmente, porque quando tem volume não funciona
+	# https://www.dba-db2.com/2013/07/useradd-in-linux-not-copying-any-file-from-skel-directory-into-it.html
+	# Depois tem que ver parece que o bash_history ta salvando em algum lugar diferente do normal (fora do $HOME)
+	cp -r /etc/skel/. /home/$USERNAME
+
 	# Configura a chave SSH
 	mkdir -p /home/$USERNAME/.ssh
 
@@ -68,7 +74,7 @@ fi
 export NGINXROOT=${DEFAULT_NGINXROOT:-"$WORKSPACE/public_html"};
 envsubst '${NGINXROOT}' < "php-nginx-default.conf" > "/etc/nginx/sites-available/default"
 # Se não tem nenhum index.html, cria um padrão
-if [ ! -d $NGINXROOT ]; then
+if [ ! $JACRIOU ]; then
 	mkdir -p $NGINXROOT;
 	envsubst '${NGINXROOT} ${USERNAME}' < "index.html" > "$NGINXROOT/index.html"
 fi
