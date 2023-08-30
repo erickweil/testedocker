@@ -16,7 +16,9 @@
 FROM ghcr.io/nestybox/ubuntu-jammy-systemd:latest
 
 # SSH Server
-EXPOSE 22
+# EXPOSE 22
+
+EXPOSE 80
 # Code-Server
 EXPOSE 8080
 
@@ -28,20 +30,22 @@ COPY configs/* ./
 RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
 	/bin/bash ./install.sh \
 	&& /bin/bash ./install_locale.sh \
+	&& /bin/bash ./install_code.sh \
 #	&& /bin/bash ./install_docker.sh \
-	&& /bin/bash ./install_php_nginx.sh \
-	&& /bin/bash ./install_ssh.sh \
-#	&& /bin/bash ./install_code.sh \
-	&& /bin/bash ./install_node.sh \
-	&& /bin/bash ./install_python.sh \
+#	&& /bin/bash ./install_php_nginx.sh \
+#	&& /bin/bash ./install_ssh.sh \
+#	&& /bin/bash ./install_node.sh \
+#	&& /bin/bash ./install_python.sh \
 #	&& /bin/bash ./install_java.sh \
 #	&& /bin/bash ./install_kubectl.sh \
 # Por último... Limpar cache do apt
 	&& rm -rf /var/lib/apt/lists/*
 
 # Para realizar build
-# docker build -t erickweil/container-vm .
+# docker build -t erickweil/container-vm:code-base .
 # Executar container:
-# docker rm -f vm01 && docker run -d --name vm01 -p 3000:22 -p 3001:8080 --privileged erickweil/container-vm
+# docker rm -f vm01 && docker run -d --name vm01 -p 3000:8080 --privileged erickweil/container-vm:code-base
 # Instalar usuário
 # docker exec vm01 /bin/bash -c "export USERNAME=usuario && PASSWORD=senha && /bin/bash ./create_user.sh"
+# Se quiser aplicar um container que foi modificado para ser uma imagem com commit
+# docker commit vm01 erickweil/container-vm:code-ptbr

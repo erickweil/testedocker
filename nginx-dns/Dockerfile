@@ -19,5 +19,8 @@ CMD ["nginx", "-g", "daemon off;"]
 # docker network create public
 
 # Executar uma vez:
-# docker -H tcp://docker:2375  run -e DOMAIN_PREFIX='docker\-'  -d -p 80:80 --restart on-failure:10 --network public --name nginx-docker-dns erickweil/nginx-docker-dns
-# docker -H tcp://docker2:2375 run -e DOMAIN_PREFIX='docker2\-' -d -p 80:80 --restart on-failure:10 --network public --name nginx-docker-dns erickweil/nginx-docker-dns
+# docker run -e DOMAIN_PREFIX='docker\-'  -d -p 80:80 --restart on-failure:10 --network public --name nginx-docker-dns erickweil/nginx-docker-dns
+# docker run -e DOMAIN_PREFIX='docker2\-' -d -p 80:80 --restart on-failure:10 --network public --name nginx-docker-dns erickweil/nginx-docker-dns
+
+
+# docker run -e DOMAIN_PREFIX='' -e SERVER_NAME='\\.tecnico\\.fslab\\.dev' -d -p 3000:80 --restart on-failure:10 --network public --name nginx-docker-dns erickweil/nginx-docker-dns:code

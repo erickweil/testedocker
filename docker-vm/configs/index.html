@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Seja Bem Vindo ${USERNAME}</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			text-align: center;
+			background-color: #eee;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		h1 {
+			color: #333;
+		}
+		p {
+			color: #666;
+			max-width: 600px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Seja Bem Vindo ${USERNAME}!</h1>
+	<hr>
+	<h3>
+		Para entrar em seu ambiente code-server, acesse este domínio com /code<br/>
+		<a href="/code/">Clique Aqui para abrir</a>
+	</h3>
+	<hr>
+	<p>
+		Modifique ou Delete esta página se desejar!
+		Todos os arquivos em <b>${NGINXROOT}</b> serão servidos pelo servidor web.
+	</p>
+</body>
+</html>

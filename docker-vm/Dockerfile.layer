@@ -1,19 +1,24 @@
-FROM erickweil/container-vm:aremilson-base
-
+# erickweil/container-vm:code-ptbr
+# basicamente imagem com ./install.sh, ./install_locale.sh, ./install_code.sh instalado
+# e então foi aberto uma vez, instalado extensão ms-ceintl.vscode-language-pack-pt-br via UI
+FROM erickweil/container-vm:code-ptbr
 WORKDIR /root
 
-COPY scripts/install_php_nginx.sh ./
+COPY scripts/*.sh ./
+COPY configs/* ./
 RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
 	apt-get update \
 #	/bin/bash ./install.sh \
 #	&& /bin/bash ./install_locale.sh \
+#	&& /bin/bash ./install_code.sh \
 #	&& /bin/bash ./install_docker.sh \
 	&& /bin/bash ./install_php_nginx.sh \
 #	&& /bin/bash ./install_ssh.sh \
-#	&& /bin/bash ./install_code.sh \
-#	&& /bin/bash ./install_node.sh \
+	&& /bin/bash ./install_node.sh \
 #	&& /bin/bash ./install_python.sh \
 #	&& /bin/bash ./install_java.sh \
 #	&& /bin/bash ./install_kubectl.sh \
 # Por último... Limpar cache do apt
 	&& rm -rf /var/lib/apt/lists/*
+
+# docker build -t registry.fslab.dev/erickweil/container-vm:aremilson -f Dockerfile.layer .

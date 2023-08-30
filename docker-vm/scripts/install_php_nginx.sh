@@ -17,6 +17,9 @@ echo "Instalar Nginx e PHP" \
 	php8.1-bcmath \
 	php8.1-fpm;
 
-cp -f php-nginx-default.conf /etc/nginx/sites-available/default;
+#cp -f php-nginx-default.conf /etc/nginx/sites-available/default;
+
+export NGINXROOT="/var/www/html";
+envsubst '${NGINXROOT}' < "php-nginx-default.conf" > "/etc/nginx/sites-available/default";
 
 nginx -t;
