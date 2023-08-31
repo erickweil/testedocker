@@ -1,0 +1,24 @@
+# APENAS PARA TESTAR
+# A IDEIA É EXECUTAR ESSES .SQL DEPOIS DE CRIAR O CONTAINER
+
+# Estágio 1: Gerar Scripts (A imagem nginx tem o envsubst e talz)
+FROM nginx as builder
+
+COPY ./scripts/* /root/
+RUN cd /root \
+	&& mkdir /tmp/initdb.d \
+	&& chmod +x *.sh \
+	# Criação dos usuários
+	&& /bin/bash ./gen_init.sh aluno1 12345678 /tmp/initdb.d \
+	&& /bin/bash ./gen_init.sh aluno2 12345678 /tmp/initdb.d \
+	&& /bin/bash ./gen_init.sh aluno3 12345678 /tmp/initdb.d
+
+# Estágio 2: Criação da imagem do mysql
+FROM mariadb
+
+COPY --from=builder /tmp/initdb.d/* /docker-entrypoint-initdb.d/
+COPY ./initdb.d/* /docker-entrypoint-initdb.d/
+
+# Corrigir permissões
+RUN chown -R mysql:mysql /docker-entrypoint-initdb.d/ \
+	&& chmod -R 777 /docker-entrypoint-initdb.d/

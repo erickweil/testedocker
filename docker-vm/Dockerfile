@@ -38,6 +38,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
 #	&& /bin/bash ./install_python.sh \
 #	&& /bin/bash ./install_java.sh \
 #	&& /bin/bash ./install_kubectl.sh \
+#	&& /bin/bash ./install_mariadb_client.sh \
 # Por último... Limpar cache do apt
 	&& rm -rf /var/lib/apt/lists/*
 
