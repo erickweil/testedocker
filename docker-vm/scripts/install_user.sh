@@ -1,4 +1,5 @@
 # Script de instalação / Configuração que executa como usuário comum
+# Apenas a primeira vez que o container é criado e se o volume estiver vazio
 
 # Configurar o git e chave ssh
 cd $HOME
@@ -7,6 +8,7 @@ cd $HOME
 #git config --global user.name $USER &&
 #git config --global user.email $USER@local &&
 git config --global core.editor nano &&
+mkdir -p $HOME/.ssh
 ssh-keygen -t ed25519 -q -f $HOME/.ssh/id_ed25519 -N ""
 
 # TEM QUE RODAR NO USUÁRIO QUE VAI USAR O CODE-SERVER

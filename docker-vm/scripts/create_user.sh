@@ -6,57 +6,65 @@
 export USERNAME=$1
 export PASSWORD=$2
 export CODEAUTH=password
-
-systemctl stop code-server@admin
-systemctl disable code-server@admin
-
+export WORKSPACE=${DEFAULT_WORKSPACE:-"/home/$USERNAME/Desktop"}
+export NGINXROOT=${DEFAULT_NGINXROOT:-"$WORKSPACE/public_html"}
 CODESERVERPATH="/home/$USERNAME/.local"
-if [ -d $CODESERVERPATH ]; then
-	JACRIOU=1
-fi
+# Este script deve rodar apenas uma vez, se rodar denovo ele não faz nada
+# Basicamente se o /home/admin não existir é porque está rodando denovo
+if [ ! -d /home/admin ]; then
+	echo $(date -u) "Container já foi configurado, não é necessário rodar este script novamente."
+else
+	echo $(date -u) "Primeira vez do container, configurando criação do usuário..."
+	# Tudo isso só acontece se for a primeira vez do container
 
-if [ ! $JACRIOU ]; then
-	# Salva a pasta .local do vscode antes de deletar o usuário
-	mv /home/admin/.local ~/.local
-fi
+	# JACRIOU será 1 se o volume do usuário já existir. (Para impedir que algumas coisas sejam sobrescritas)
+	# (Basicamente estamos supondo que se o .local existir é porque o volume já existe)
+	if [ -d $CODESERVERPATH ]; then
+		JACRIOU=1
+	fi
 
-userdel --remove admin
-# Adiciona o novo usuário com diretório home
-useradd --create-home --shell /bin/bash $USERNAME
+	# Desativa o usuário admin
+	echo "Removendo usuário admin"
+	systemctl stop code-server@admin
+	systemctl disable code-server@admin
 
-# Muda a sua senha e adiciona ao grupo sudo
-echo "$USERNAME:$PASSWORD" | chpasswd
-adduser $USERNAME sudo
-# Adiciona ao grupo docker
-usermod -aG docker $USERNAME
+	if [ ! $JACRIOU ]; then
+		# Salva a pasta .local do vscode antes de deletar o usuário
+		mv /home/admin/.local ~/.local
+	fi
 
-# Operações que só serão feitas se o volume da pasta do usuário estava vazio
-if [ ! $JACRIOU ]; then
-	# Copia o skel manualmente, porque quando tem volume não funciona
-	# https://www.dba-db2.com/2013/07/useradd-in-linux-not-copying-any-file-from-skel-directory-into-it.html
-	# Depois tem que ver parece que o bash_history ta salvando em algum lugar diferente do normal (fora do $HOME)
-	cp -r /etc/skel/. /home/$USERNAME
+	userdel --remove admin
+	# Adiciona o novo usuário com diretório home
+	echo "Criando usuário $USERNAME"
+	useradd --create-home --shell /bin/bash $USERNAME
 
-	# Configura a chave SSH
-	mkdir -p /home/$USERNAME/.ssh
+	# Muda a sua senha e adiciona ao grupo sudo
+	echo "$USERNAME:$PASSWORD" | chpasswd
+	adduser $USERNAME sudo
+	# Adiciona ao grupo docker
+	usermod -aG docker $USERNAME
 
-	# Configurar code-server
-	# diretorio onde fica as configurações do code-server
-	# copia de volta a pasta do vscode salva lá do admin
-	mv ~/.local $CODESERVERPATH
-	./mv_code_server.sh "$CODESERVERPATH/share/code-server" "admin" "$USERNAME"
+	# Operações que só serão feitas se o volume da pasta do usuário estava vazio
+	if [ ! $JACRIOU ]; then
+		# Copia o skel manualmente, porque quando tem volume não funciona
+		# https://www.dba-db2.com/2013/07/useradd-in-linux-not-copying-any-file-from-skel-directory-into-it.html
+		# Depois tem que ver parece que o bash_history ta salvando em algum lugar diferente do normal (fora do $HOME)
+		cp -r /etc/skel/. /home/$USERNAME
 
-	# Copia a configuração padrão do code-server, substituindo as variáveis USERNAME e PASSWORD
-	# https://stackoverflow.com/questions/14155596/how-to-substitute-shell-variables-in-complex-text-files
-	mkdir -p /home/$USERNAME/.config/code-server
-	envsubst < "config.yaml" > "/home/$USERNAME/.config/code-server/config.yaml"
-fi
+		# Configurar code-server
+		# diretorio onde fica as configurações do code-server
+		# copia de volta a pasta do vscode salva lá do admin
+		mv ~/.local $CODESERVERPATH
+		./mv_code_server.sh "$CODESERVERPATH/share/code-server" "admin" "$USERNAME"
 
-# Configurar o serviço do code-server para utilizar o Workspace padrão
-if [ ! -e "/etc/systemd/system/code-server@.service.d/override.conf" ]; then
-	export WORKSPACE=${DEFAULT_WORKSPACE:-"/home/$USERNAME/Desktop"};
-	
-	mkdir -p $WORKSPACE;
+		# Copia a configuração padrão do code-server, substituindo as variáveis USERNAME e PASSWORD
+		# https://stackoverflow.com/questions/14155596/how-to-substitute-shell-variables-in-complex-text-files
+		mkdir -p /home/$USERNAME/.config/code-server
+		envsubst < "config.yaml" > "/home/$USERNAME/.config/code-server/config.yaml"
+	fi
+
+	# Configurar o serviço do code-server para utilizar o Workspace padrão	
+	mkdir -p $WORKSPACE
 
 	{ echo "[Service]"; 
 	  echo "ExecStart=";
@@ -68,32 +76,37 @@ if [ ! -e "/etc/systemd/system/code-server@.service.d/override.conf" ]; then
 	cp ~/override.conf "/etc/systemd/system/code-server@.service.d/override.conf"
 
 	systemctl daemon-reload
-fi
 
-# Configurar nginx
-export NGINXROOT=${DEFAULT_NGINXROOT:-"$WORKSPACE/public_html"};
-envsubst '${NGINXROOT}' < "php-nginx-default.conf" > "/etc/nginx/sites-available/default"
-# Se não tem nenhum index.html, cria um padrão
-if [ ! $JACRIOU ]; then
-	mkdir -p $NGINXROOT;
-	envsubst '${NGINXROOT} ${USERNAME}' < "index.html" > "$NGINXROOT/index.html"
-fi
-# Para aplicar a configuração nova
-systemctl reload nginx
+	# Configurar nginx
+	envsubst '${NGINXROOT}' < "php-nginx-default.conf" > "/etc/nginx/sites-available/default"
 
-# Garante que as permissões estão corretas, corrige possíveis problemas com volumes
-# https://winaero.com/run-chmod-separately-for-files-and-directories/
-chown -R $USERNAME:$USERNAME /home/$USERNAME
-chmod -R 644 /home/$USERNAME && find /home/$USERNAME -type d -print0 |xargs -0 chmod 755
+	# cria um index.html padrão se for a primeira vez
+	if [ ! $JACRIOU ]; then
+		mkdir -p $NGINXROOT
+		envsubst '${NGINXROOT} ${USERNAME}' < "index.html" > "$NGINXROOT/index.html"
+	fi
 
-# Iniciar code-server
-systemctl enable --now code-server@$USERNAME
+	# Para aplicar a configuração nova
+	systemctl reload nginx
 
-# Configuração do usuário, configuração git e criação de chave ssh padrão
-if [ ! $JACRIOU ]; then
-	cp install_user.sh /home/$USERNAME/install_user.sh
-	cd /home/$USERNAME
-	chown $USERNAME:$USERNAME ./install_user.sh
-	sudo -H -u $USERNAME bash ./install_user.sh
-	rm ./install_user.sh
+	# Garante que as permissões estão corretas, corrige possíveis problemas com volumes
+	chown -R $USERNAME:$USERNAME /home/$USERNAME
+
+	# Será necessário se o volume já existe? 
+	if [ ! $JACRIOU ]; then
+		# https://winaero.com/run-chmod-separately-for-files-and-directories/
+		chmod -R 644 /home/$USERNAME && find /home/$USERNAME -type d -print0 |xargs -0 chmod 755
+	fi
+
+	# Iniciar code-server
+	systemctl enable --now code-server@$USERNAME
+
+	# Configuração do usuário, configuração git e criação de chave ssh padrão
+	if [ ! $JACRIOU ]; then
+		cp install_user.sh /home/$USERNAME/install_user.sh
+		cd /home/$USERNAME
+		chown $USERNAME:$USERNAME ./install_user.sh
+		sudo -H -u $USERNAME bash ./install_user.sh
+		rm ./install_user.sh
+	fi
 fi

@@ -19,7 +19,15 @@ echo "Instalar Nginx e PHP" \
 
 #cp -f php-nginx-default.conf /etc/nginx/sites-available/default;
 
+# Impedir que tenha o mesmo número de processos que o número de núcleos
+# https://stackoverflow.com/questions/11245144/replace-whole-line-containing-a-string-using-sed
+sed -i -e "s/^worker_processes.*$/worker_processes 1;/" /etc/nginx/nginx.conf;
+
 export NGINXROOT="/var/www/html";
 envsubst '${NGINXROOT}' < "php-nginx-default.conf" > "/etc/nginx/sites-available/default";
+
+# Iniciar apenas 1 thread do php-fpm
+# https://gist.github.com/fromthestone/f4fa580f6637c0855fd3a9819083f70d
+sed -i -e "s/^pm\.start_servers.*$/pm.start_servers = 1/" /etc/php/*/fpm/pool.d/www.conf;
 
 nginx -t;

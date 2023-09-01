@@ -42,11 +42,16 @@ RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
 # Por último... Limpar cache do apt
 	&& rm -rf /var/lib/apt/lists/*
 
-# Para realizar build
+# Realizar build e arrumar as coisas iniciais
 # docker build -t erickweil/container-vm:code .
 # Executar container:
-# docker rm -f vm01 && docker run -d --name vm01 -p 3000:8080 --privileged erickweil/container-vm:code
-# Instalar usuário
-# docker exec vm01 /bin/bash -c "export USERNAME=usuario && PASSWORD=senha && /bin/bash ./create_user.sh"
-# Se quiser aplicar um container que foi modificado para ser uma imagem com commit
-# docker commit vm01 erickweil/container-vm:code-ptbr
+# docker rm -f vm01; docker run -d --name vm01 -p 3000:8080 --privileged erickweil/container-vm:code
+# 1. Abre no navegador http://localhost:3000/ e instala a extensão ms-ceintl.vscode-language-pack-pt-br
+# 2. Clicar botão para reiniciar com o locale pt-br
+# 3. Escolher temas -> Modo escuro
+# 4. Configuração "Terminal > Integrated: Allow Chords" desmarcar (Para funcionar crtl+k usando o nano) 
+# Aplicar container que foi modificado para ser uma imagem
+# docker stop vm01; docker commit vm01 erickweil/container-vm:code-ptbr-v2
+
+ENTRYPOINT ["sh","/root/docker-entrypoint.sh"]
+CMD ["/sbin/init", "--log-level=err"]

@@ -1,7 +1,7 @@
-# erickweil/container-vm:code-ptbr
+# erickweil/container-vm:code-ptbr-v2
 # basicamente imagem com ./install.sh, ./install_locale.sh, ./install_code.sh instalado
 # e então foi aberto uma vez, instalado extensão ms-ceintl.vscode-language-pack-pt-br via UI
-FROM erickweil/container-vm:code-ptbr
+FROM erickweil/container-vm:code-ptbr-v2
 WORKDIR /root
 
 COPY scripts/*.sh ./
@@ -22,4 +22,5 @@ RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
 # Por último... Limpar cache do apt
 	&& rm -rf /var/lib/apt/lists/*
 
-# docker build -t registry.fslab.dev/erickweil/container-vm:aremilson -f Dockerfile.layer .
+# docker build -t container-vm -f Dockerfile.layer .
+# docker rm -f vm01; docker run -e "USERNAME=teste" -e "PASSWORD=teste" -v vol-vm01:/home/teste -d -p 3000:8080 --name vm01 --privileged container-vm

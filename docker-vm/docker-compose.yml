@@ -7,6 +7,9 @@ services:
      - vol-user:/home/${USERNAME}
     networks:
       - net-user
+    environment:
+      USERNAME: "${USERNAME}"
+      PASSWORD: "${PASSWORD}"
     deploy:
       restart_policy:
         condition: on-failure

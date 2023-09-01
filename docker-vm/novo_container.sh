@@ -16,10 +16,9 @@ cp "./usuarios/docker-compose.yml" $COMPOSEFILE
 
 SQLFILE="./usuarios/$USERNAME/create_user.sql"
 envsubst '${USERNAME} ${PASSWORD}' < "create_user.template.sql" > $SQLFILE
-#sed -i -e "s/\-/\\\-/g" $SQLFILE
 
 echo "Criando usuário no banco de dados"
 mysql -h 127.0.0.1 < $SQLFILE
 
 echo "Iniciando o container"
-bash ./subir_container.sh $COMPOSEFILE $ENVFILE up
+docker compose -f $COMPOSEFILE --env-file $ENVFILE up -d
