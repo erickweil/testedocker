@@ -10,12 +10,13 @@ services:
     environment:
       USERNAME: "${USERNAME}"
       PASSWORD: "${PASSWORD}"
+    restart: unless-stopped
     deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 3
+      #  window: 120s
       resources:
         limits:
           cpus: '1'

@@ -20,5 +20,9 @@ envsubst '${USERNAME} ${PASSWORD}' < "create_user.template.sql" > $SQLFILE
 echo "Criando usuário no banco de dados"
 mysql -h 127.0.0.1 < $SQLFILE
 
+echo "Parando o container"
+docker compose -f $COMPOSEFILE --env-file $ENVFILE down
+
 echo "Iniciando o container"
 docker compose -f $COMPOSEFILE --env-file $ENVFILE up -d
+#sleep 5
