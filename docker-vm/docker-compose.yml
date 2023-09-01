@@ -1,0 +1,30 @@
+services:
+  user:
+    image: "${USER_CONTAINER_IMAGE}"
+    runtime: sysbox-runc
+    container_name: "${USERNAME}"
+    volumes:
+     - vol-user:/home/${USERNAME}
+    networks:
+      - net-user
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          memory: 512M
+
+volumes:
+  vol-user:
+    name: "vol-${USERNAME}"
+
+networks:
+  net-user:
+    name: "${DOCKER_NETWORK}"
+    external: true
