@@ -4,23 +4,35 @@
 FROM erickweil/container-vm:code-ptbr-v2
 WORKDIR /root
 
+ENV INSTALL_USER=admin
+ENV INSTALL_HOME=/home/admin
+
 COPY scripts/*.sh ./
 COPY configs/* ./
-RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
-	apt-get update \
-#	/bin/bash ./install.sh \
+RUN chmod 644 ./* && chmod +x *.sh \
+	&& export DEBIAN_FRONTEND=noninteractive \
+	&& apt-get update \
+#	&& /bin/bash ./install.sh \
 #	&& /bin/bash ./install_locale.sh \
 #	&& /bin/bash ./install_code.sh \
-#	&& /bin/bash ./install_docker.sh \
+	&& /bin/bash ./install_docker.sh \
 	&& /bin/bash ./install_php_nginx.sh \
-#	&& /bin/bash ./install_ssh.sh \
+	&& /bin/bash ./install_ssh.sh \
 	&& /bin/bash ./install_node.sh \
-#	&& /bin/bash ./install_python.sh \
-#	&& /bin/bash ./install_java.sh \
-#	&& /bin/bash ./install_kubectl.sh \
+	&& /bin/bash ./install_python.sh \
+	&& /bin/bash ./install_java.sh \
+	&& /bin/bash ./install_kubectl.sh \
 	&& /bin/bash ./install_mariadb_client.sh \
 # Por último... Limpar cache do apt
 	&& rm -rf /var/lib/apt/lists/*
 
 # docker build -t container-vm -f Dockerfile.layer .
+# docker rm -f vm01; docker run -d -p 3000:8080 --name vm01 --privileged container-vm
+# 1. Abre no navegador http://localhost:3000/ e instala as extensões:
+# 	- Java Language Pack - vscjava.vscode-java-pack
+#	- ESLint - dbaeumer.vscode-eslint
+#	- Kubernetes + Yaml - ms-kubernetes-tools.vscode-kubernetes-tools
+# Aplicar container que foi modificado para ser uma imagem
+# docker stop vm01; docker commit vm01 aaa
+
 # docker rm -f vm01; docker run -e "USERNAME=teste" -e "PASSWORD=teste" -v vol-vm01:/home/teste -d -p 3000:8080 --name vm01 --privileged container-vm

@@ -23,12 +23,16 @@ EXPOSE 80
 EXPOSE 8080
 
 WORKDIR /root
+
+ENV INSTALL_USER=admin
+ENV INSTALL_HOME=/home/admin
 # VER DEPOIS: Configurar que programas instalar ou não via alguma variável de ambiente
 # Por enquanto é só comentar ou descomentar aqui na hora de fazer o build
 COPY scripts/*.sh ./
 COPY configs/* ./
-RUN export DEBIAN_FRONTEND=noninteractive && chmod +x *.sh && \
-	/bin/bash ./install.sh \
+RUN chmod 644 ./* && chmod +x *.sh \
+	&& export DEBIAN_FRONTEND=noninteractive \
+	&& /bin/bash ./install.sh \
 	&& /bin/bash ./install_locale.sh \
 	&& /bin/bash ./install_code.sh \
 #	&& /bin/bash ./install_docker.sh \

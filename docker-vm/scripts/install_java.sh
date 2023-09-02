@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e # Se falhar 1 comando falha tudo.
+
 # https://www.linode.com/docs/guides/how-to-install-openjdk-ubuntu-22-04/
 echo "Instalar Java"
 wget https://download.java.net/java/GA/jdk20.0.2/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-20.0.2_linux-x64_bin.tar.gz
