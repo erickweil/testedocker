@@ -8,11 +8,10 @@
 
 # O Wordpress quando iniciado irá lhe guiar por um processo de instalação simples
 # e então você poderá criar um site de forma fácil
-version: "3.8"
 services:
   db:
-    image: mysql
-    command: '--default-authentication-plugin=mysql_native_password'
+    image: mysql:5.7
+    # command: '--default-authentication-plugin=mysql_native_password'
     volumes:
       - db_data:/var/lib/mysql
     environment:
@@ -21,6 +20,8 @@ services:
       - MYSQL_USER=wordpress
       - MYSQL_PASSWORD=wordpress
   wordpress:
+    depends_on:
+      - db
     image: wordpress
     ports:
       - 3000:80
@@ -29,5 +30,9 @@ services:
       - WORDPRESS_DB_USER=wordpress
       - WORDPRESS_DB_PASSWORD=wordpress
       - WORDPRESS_DB_NAME=wordpress
+    #volumes:
+    #  - wordpress:/var/www/html
+
 volumes:
   db_data:
+  # wordpress:

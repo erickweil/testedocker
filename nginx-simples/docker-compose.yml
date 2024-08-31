@@ -1,6 +1,6 @@
-version: '3.8'
 services:
   nginxhtml:
+    container_name: nginxhtml
     build: .
     ports:
       - 3000:80

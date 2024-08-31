@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   meu-banco:
-    image: mongo:4.4.6
+    image: mongo:latest
     volumes:
       - vol-banco:/data/db
   node-aula:

@@ -32,4 +32,4 @@ services:
 volumes:
   vol:
     external: true
-    name: "insira-aqui-o-volume-docker"
+    name: "phpmyadmin_mysql-db-vol"
