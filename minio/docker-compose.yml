@@ -1,0 +1,24 @@
+services:
+
+  # https://github.com/clemens33/minio/tree/master
+  # http://www.sefidian.com/2022/04/08/deploy-standalone-minio-using-docker-compose/
+  # [Opcional] para rodar esse container, execute manualmente: docker compose up -d --force-recreate
+  minio:
+    container_name: minio
+    #image: minio/minio:latest
+    build: .
+    volumes:
+      - "${MINIO_VOLUME:-vol-minio}:/data"
+    ports:
+      - "${MINIO_SERVER_EXPOSE_PORT}:9000"
+      - "${MINIO_CONSOLE_EXPOSE_PORT}:9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+      MINIO_ACCESS_KEY: "${MINIO_ACCESS_KEY}"
+      MINIO_SECRET_KEY: "${MINIO_SECRET_KEY}"
+      MINIO_BUCKET: "${MINIO_BUCKET}"
+    command: server /data --console-address :9001
+
+volumes:
+  vol-minio:
