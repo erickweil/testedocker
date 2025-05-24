@@ -1,0 +1,17 @@
+{
+  "name": "loki-logger",
+  "version": "1.0.0",
+  "main": "logger.js",
+  "scripts": {
+    "start": "node logger.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "winston": "^3.17.0",
+    "winston-loki": "^6.1.3"
+  }
+}

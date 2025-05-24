@@ -1,0 +1,90 @@
+# https://medium.com/@habbema/come%C3%A7ando-com-grafana-loki-d87ea894f944
+
+services:
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    volumes:
+      - ./loki:/etc/loki/
+      - loki-data:/loki/
+    command: -config.file=/etc/loki/loki-config.yaml
+    networks:
+      grafana:
+        ipv4_address: 172.99.0.2
+
+  # Loki não possui autenticação (https://grafana.com/docs/loki/latest/operations/authentication/)
+  # Então temos que colocar um proxy reverso com basic auth (.htpasswd)
+  loki-nginx:
+    container_name: loki-nginx
+    build:
+      context: ./nginx-basic-auth
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "3100:3100"
+    environment:
+      - NGINX_PORT=3100
+      - UPSTREAM=172.99.0.2:3000
+      - BASICAUTH_USER=${LOKI_BASICAUTH_USER}
+      - BASICAUTH_PWD=${LOKI_BASICAUTH_PWD}
+      - LOKI_TENANT_ID=loki-teste
+    networks:
+      grafana:
+        ipv4_address: 172.99.0.3
+
+  # After that, Grafana Loki instance is available at http://localhost:3100,
+  # with a Grafana instance running at http://localhost:3000. Username admin, password admin. 
+  # Add the Loki source with the URL http://loki:3100, and the explorer should work.
+  grafana:
+    container_name: grafana
+    volumes:
+      - ./grafana/datasources/:/etc/grafana/provisioning/datasources/
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        /run.sh
+    image: grafana/grafana:latest
+    ports:
+      - "3101:3000"
+    networks:
+      grafana:
+        ipv4_address: 172.99.0.4
+    depends_on:
+      - loki-nginx
+
+  test-loki-logger:
+    container_name: test-loki-logger
+    build:
+      context: ./test-loki-logger
+      dockerfile: Dockerfile
+    networks:
+      grafana:
+        ipv4_address: 172.99.0.5
+    environment:
+      - LOKI_URL=http://loki-nginx:3100
+      - LOKI_LABEL=test-logger
+      - LOKI_BASICAUTH_USER=${LOKI_BASICAUTH_USER}
+      - LOKI_BASICAUTH_PWD=${LOKI_BASICAUTH_PWD}
+    depends_on:
+      - loki-nginx
+    
+volumes:
+  loki-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+# Precisa de rede com ip e tudo mais só porque o nginx precisa encaminhar para o upstream usando o ip do loki
+networks:
+  grafana:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.99.0.0/16
+          gateway: 172.99.0.1

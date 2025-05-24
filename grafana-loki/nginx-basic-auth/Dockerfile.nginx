@@ -1,0 +1,16 @@
+FROM nginx:alpine
+
+ENV NGINX_PORT="80"
+
+# para poder usar htpasswd
+RUN apk add --update apache2-utils \
+    && rm -rf /var/cache/apk/*
+
+COPY ./nginx.conf /etc/nginx/templates/default.conf.template
+
+# Para executar meus scripts antes do entrypoint
+COPY ./before-entrypoint.sh /before-entrypoint.sh
+RUN chmod +x /before-entrypoint.sh
+
+ENTRYPOINT ["sh","/before-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
