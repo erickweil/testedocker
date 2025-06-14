@@ -1,14 +1,22 @@
-const express = require('express')
-const app = express()
+import "dotenv/config";
 
-let contador = 0
+import express from "express";
 
-app.get("/", (req, res) => {
-    console.log("Executou");
-    contador++;
-    res.send("<h1>FUNCIONOU "+contador+" vezes</h1>")
-})
+const app = express();
 
+let contagem = 0;
+app.use((req, res, next) => {
+    res.status(200).send({
+        message: "OK - Funcionou!",
+        segredo: process.env.SEGREDO,
+        contagem: contagem++
+    })
+});
 
-// Deixe por último
-app.listen(5000)
+if(!process.env.PORT) {
+    throw new Error("Deve definir a porta no env!");
+}
+
+app.listen(process.env.PORT, () => {
+    console.log("Servidor iniciado!", process.env.PORT);
+});

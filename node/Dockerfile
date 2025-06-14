@@ -1,5 +1,11 @@
-FROM node:latest
-WORKDIR /app-node
+FROM node:22-alpine
+
+WORKDIR /node-app
+
+COPY package.json package-lock.json .
+RUN npm ci
+
 COPY . .
-RUN npm install
-ENTRYPOINT npm run devStart
+RUN cp .env.example .env
+
+ENTRYPOINT ["npm", "start"]
