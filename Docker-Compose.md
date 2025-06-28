@@ -21,7 +21,6 @@ Veja como fica no Docker Compose:
 
 [./nginx-simples/docker-compose.yml](./nginx-simples/docker-compose.yml)
 ```yml
-version: '3.8'
 services:
   nginxhtml:
     build: .
@@ -35,7 +34,7 @@ docker-compose up -d
 ```
 
 Vamos lá então entender cada linha deste arquivo:
-- version: indica a versão da sintaxe utilizada no arquivo. O Docker Compose possui diferentes versões, sendo que cada versão pode ter recursos e funcionalidades específicas.
+- version: (Nao usado mais: https://docs.docker.com/reference/compose-file/version-and-name/) indicava a versão da sintaxe utilizada no arquivo. O Docker Compose possuia diferentes versões, sendo que cada versão pode ter recursos e funcionalidades específicas.
 - services: define que containers deseja executar, cada entrada define um container diferente que será criado e executado.
 - nginxhtml: É a definição de um container
 - build: especifica que irá realizar o build da imagem a partir do Dockerfile que encontra-se no diretório especificado. No caso foi especificado o diretório atual '.' (ponto) 
@@ -90,7 +89,6 @@ Usando o Docker Compose, podemos simplificar e automatizar todo esse processo. B
 
 [./node-aula/docker-compose.yml](./node-aula/docker-compose.yml)
 ```yml
-version: '3.8'
 services:
   meu-banco:
     image: mongo:4.4.6
@@ -124,7 +122,6 @@ Vamos lá, a ideia é que tudo o que é feito no **docker run** precisa também 
 
 - Variáveis de Ambiente: É possível passar variáveis de ambiente para um container, neste exemplo foi utilizado uma variável de ambiente MONGODB_URL para configurar a url de conexão do banco de dados, e a variável TITULO para exibir este título na página.
 ```yaml
-version: '3.8'
 services:
 ...
   node-aula:
@@ -137,7 +134,6 @@ services:
 
 - Volumes: Para que um container possua persistência de dados, é necessário que o diretório dentro do container que deseja manter arquivos salvos seja mapeado em um volume. Isto foi feito no banco de dados, para que não se perca todos os registros a cada reinício do container.
 ```yml
-version: '3.8'
 services:
   meu-banco:
     ...
@@ -150,7 +146,6 @@ volumes:
 
 - build: Quando a imagem do container deve ser construída a partir de um Dockerfile, deve ser especificado pela chave **build** e seu valor deve ser '.' (ponto) quando o Dockerfile está no mesmo diretório ou o caminho para o diretório com o Dockerfile. É como se estivesse executando o comando `docker build -t node-aula .` para criar a imagem
 ```yml
-version: '3.8'
 services:
   ...
   node-aula:
@@ -160,7 +155,6 @@ services:
 
 - image: Já se a imagem deve ser baixada do Registry do Docker Hub, se especifica isso pela chave **image** e o nome e tag da imagem assim como estiver descrito no Docker Hub.
 ```yml
-version: '3.8'
 services:
   meu-banco:
     image: mongo:4.4.6
