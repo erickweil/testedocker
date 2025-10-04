@@ -25,8 +25,11 @@ cat << EOF > "${POLICY_FILE}"
             "Effect": "Allow",
             "Action": [
                 "s3:ListBucket",
+                "s3:ListAllMyBuckets",
+                "s3:GetBucketLocation",
                 "s3:PutObject",
                 "s3:DeleteObject",
+                "s3:DeleteObjectVersion",
                 "s3:GetObject"
             ],
             "Resource": [
