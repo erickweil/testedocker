@@ -1,0 +1,52 @@
+services:
+  # https://github.com/mpolinowski/rabbitmq-mqtt-ws-docker/blob/master/docker-compose.yml
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4-management
+    # https://stackoverflow.com/questions/41330514/docker-rabbitmq-persistency
+    # https://github.com/docker-library/rabbitmq/issues/392
+    # if hostname is not provided, it creates a random hostname each time service is restarted.
+    hostname: rabbitmq
+    volumes:
+      - rabbitmq-vol:/var/lib/rabbitmq
+      # https://github.com/rabbitmq/rabbitmq-server/blob/main/deps/rabbit/docs/rabbitmq.conf.example
+      - type: bind
+        source: ./rabbitmq.conf
+        target: /etc/rabbitmq/rabbitmq.conf
+        read_only: true
+    environment:
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    ports:
+      # Administração web
+      - 15672:15672
+      # AMQP (não expor)
+      # - 5672:5672
+    networks:
+      net:
+        ipv4_address: 172.98.0.2
+
+
+  haproxy:
+    image: haproxy:lts
+    container_name: haproxy
+    volumes:
+      # Mapeia o arquivo de configuração do HAProxy
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      # Mapeia a pasta com os certificados
+      - ./ssl-certificates:/etc/ssl/certs:ro
+    ports:
+      # AMQPS
+      - "5671:5671"
+    networks:
+      net:
+        ipv4_address: 172.98.0.3
+
+# Precisa de rede com ip e tudo mais
+networks:
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.98.0.0/16
+          gateway: 172.98.0.1
