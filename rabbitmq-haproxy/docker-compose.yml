@@ -15,17 +15,13 @@ services:
         target: /etc/rabbitmq/rabbitmq.conf
         read_only: true
     environment:
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
     ports:
       # Administração web
       - 15672:15672
       # AMQP (não expor)
       # - 5672:5672
-    networks:
-      net:
-        ipv4_address: 172.98.0.2
-
 
   haproxy:
     image: haproxy:lts
@@ -38,15 +34,6 @@ services:
     ports:
       # AMQPS
       - "5671:5671"
-    networks:
-      net:
-        ipv4_address: 172.98.0.3
 
-# Precisa de rede com ip e tudo mais
-networks:
-  net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.98.0.0/16
-          gateway: 172.98.0.1
+volumes:
+  rabbitmq-vol:
